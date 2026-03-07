@@ -17,10 +17,45 @@ interface Project {
   github?: string
   live?: string
   thumbnail: string
+  images?: string[]
+  imagePerPage?: number
   lines: string[]
 }
 
 const projects: Project[] = [
+  {
+    id: 'rl-card',
+    filename: '29CardGame_RL',
+    ext: '.py',
+    title: 'Policy Development for 29 Card Game - RL Agent',
+    description: 'Developing a reinforcement learning agent to master the 29 card game, utilizing deep Q-networks and curriculum learning for strategic gameplay.',
+    longDesc: 'RL experiments for the classic 29 card game. AI agents learn game strategy through curriculum-based self-play against random, rule-based, and learned opponents.',
+    tech: ['Python', 'PyTorch', 'DQN', 'Self-Play', 'Curriculum Learning'],
+    color: '#818cf8',
+    category: 'ai',
+    categoryLabel: 'ai',
+    status: 'experiment',
+    github: 'https://github.com/MRGDFK/reinforcement_learning_agent_for_twenty_nine_card_game',
+    thumbnail: '/projects/RL 1.png',
+    images: [
+      '/projects/RL 1.png',
+      '/projects/RL 2.png',
+    ],
+    imagePerPage: 1,
+    lines: [
+      '# RL Agent for 29 Card Game',
+      'import torch, numpy as np',
+      '',
+      'class CardAgent:',
+      '  def __init__(self):',
+      '    self.policy = DQN()',
+      '    self.epsilon = 0.1',
+      '',
+      '  def learn(self, state, reward):',
+      '    # Q-learning update',
+      '    ...',
+    ],
+  },
   {
     id: 'urban-nest',
     filename: 'URBAN_NEST',
@@ -34,7 +69,16 @@ const projects: Project[] = [
     categoryLabel: 'web',
     status: 'completed',
     github: 'https://github.com/MRGDFK/URBAN_NEST',
-    thumbnail: '/projects/urban-nest.png',
+    thumbnail: '/projects/UN 1.png',
+    images: [
+      '/projects/UN 1.png',
+      '/projects/UN 2.png',
+      '/projects/UN 3.png',
+      '/projects/UN 4.png',
+      '/projects/UN 5.png',
+      '/projects/UN 6.png',
+    ],
+    imagePerPage: 1,
     lines: [
       '// Real Estate Listing Platform',
       'export const UrbanNest = {',
@@ -45,38 +89,6 @@ const projects: Project[] = [
       '    "Search & filters",',
       '    "Responsive UI",',
       '  ],',
-      '}',
-    ],
-  },
-  {
-    id: 'urban-nest-php',
-    filename: 'URBAN_NEST_PHP',
-    ext: '.php',
-    title: 'Urban Nest (PHP Version)',
-    description: 'Real Estate Listing System',
-    longDesc: 'Full-stack real estate listing system built with PHP, MySQL, and JavaScript. Features property listing management, database-driven search, dynamic page rendering, and a responsive front-end.',
-    tech: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS'],
-    color: '#fb923c',
-    category: 'web',
-    categoryLabel: 'web',
-    status: 'completed',
-    github: 'https://github.com/MRGDFK/UrbanNest',
-    thumbnail: '/projects/urban-nest-php.png',
-    lines: [
-      '<?php',
-      '// Real Estate Listing System',
-      '',
-      'class PropertyListing {',
-      '  public function search($query) {',
-      '    $sql = "SELECT * FROM listings',
-      '            WHERE title LIKE ?";',
-      '    return $this->db->query($sql);',
-      '  }',
-      '',
-      '  public function render($data) {',
-      '    // Dynamic page rendering',
-      '    include "views/listing.php";',
-      '  }',
       '}',
     ],
   },
@@ -93,7 +105,15 @@ const projects: Project[] = [
     categoryLabel: 'mobile',
     status: 'completed',
     github: 'https://github.com/MRGDFK/TaskZen',
-    thumbnail: '/projects/taskzen.png',
+    thumbnail: '/projects/TaskZen 1.jpg',
+    images: [
+      '/projects/TaskZen 1.jpg',
+      '/projects/TaskZen 2.jpg',
+      '/projects/TaskZen 3.jpg',
+      '/projects/TaskZen 4.jpg',
+      '/projects/TaskZen 5.jpg',
+      '/projects/TaskZen 6.jpg',
+    ],
     lines: [
       '# TaskZen - Android Task Manager',
       '',
@@ -133,38 +153,10 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 'rl-card',
-    filename: '29CardGame_RL',
-    ext: '.py',
-    title: 'Policy Development for 29 Card Game - RL Agent',
-    description: 'Delevoping a reinforcement learning agent to master the 29 card game, utilizing deep Q-networks and curriculum learning for strategic gameplay.',
-    longDesc: 'RL experiments for the classic 29 card game. AI agents learn game strategy through curriculum-based self-play against random, rule-based, and learned opponents.',
-    tech: ['Python', 'PyTorch', 'DQN', 'Self-Play', 'Curriculum Learning'],
-    color: '#818cf8',
-    category: 'ai',
-    categoryLabel: 'ai',
-    status: 'experiment',
-    github: 'https://github.com/MRGDFK/reinforcement_learning_agent_for_twenty_nine_card_game',
-    thumbnail: '/projects/rl-card.png',
-    lines: [
-      '# RL Agent for 29 Card Game',
-      'import torch, numpy as np',
-      '',
-      'class CardAgent:',
-      '  def __init__(self):',
-      '    self.policy = DQN()',
-      '    self.epsilon = 0.1',
-      '',
-      '  def learn(self, state, reward):',
-      '    # Q-learning update',
-      '    ...',
-    ],
-  },
-  {
     id: 'sen-pi',
     filename: 'SEN_pi_DemonSlayer',
     ext: '.c',
-    title: 'SEN_pi Demon Slayer',
+    title: 'Demon Slayer Game',
     description: 'C Game Project',
     longDesc: 'A Demon Slayer themed game written in C. Features ASCII-art styled gameplay, enemy encounters, and custom game logic built from scratch.',
     tech: ['C', 'Game Logic', 'ASCII Art'],
@@ -173,7 +165,17 @@ const projects: Project[] = [
     categoryLabel: 'game',
     status: 'completed',
     github: 'https://github.com/MRGDFK/SEN_pi--Demon-Slayer',
-    thumbnail: '/projects/sen-pi.png',
+    thumbnail: '/projects/DS 1.jpg',
+    images: [
+      '/projects/DS 1.jpg',
+      '/projects/DS 2.jpg',
+      '/projects/DS 3.jpg',
+      '/projects/DS 4.jpg',
+      '/projects/DS 5.jpg',
+      '/projects/DS 6.jpg',
+      '/projects/DS 7.jpg',
+    ],
+    imagePerPage: 1,
     lines: [
       '#include <stdio.h>',
       '#include "game.h"',
@@ -185,6 +187,43 @@ const projects: Project[] = [
       '    render_frame();',
       '    handle_input();',
       '    update_state();',
+      '  }',
+      '}',
+    ],
+  },
+  {
+    id: 'urban-nest-php',
+    filename: 'UrbanNest',
+    ext: '.php',
+    title: 'Urban Nest (PHP)',
+    description: 'Real Estate Platform — PHP Edition',
+    longDesc: 'A PHP-powered real estate listing platform with property search, user authentication, and dynamic listings. Backend built with PHP and MySQL.',
+    tech: ['PHP', 'MySQL', 'HTML/CSS', 'JavaScript'],
+    color: '#a78bfa',
+    category: 'web',
+    categoryLabel: 'web',
+    status: 'completed',
+    github: 'https://github.com/MRGDFK/UrbanNest',
+    thumbnail: '/projects/UN 1.png',
+    images: [
+      '/projects/UN 1.png',
+      '/projects/UN 2.png',
+      '/projects/UN 3.png',
+      '/projects/UN 4.png',
+      '/projects/UN 5.png',
+      '/projects/UN 6.png',
+    ],
+    imagePerPage: 1,
+    lines: [
+      '<?php',
+      '// Urban Nest — PHP Edition',
+      'class PropertyListing {',
+      '  public function search($query) {',
+      '    return DB::select(',
+      '      "SELECT * FROM listings',
+      '       WHERE title LIKE ?",',
+      '      ["%{$query}%"]',
+      '    );',
       '  }',
       '}',
     ],
@@ -234,7 +273,56 @@ function BackIcon() {
 // ─── Thumbnail ───────────────────────────────────────────────────────────────
 function ProjectThumbnail({ project, tall = false }: { project: Project; tall?: boolean }) {
   const [imgError, setImgError] = useState(false)
+  const [page, setPage] = useState(0)
 
+  const images = project.images ?? []
+  const perPage = project.imagePerPage ?? 3
+  const totalPages = Math.ceil(images.length / perPage)
+  const currentImages = images.slice(page * perPage, (page + 1) * perPage)
+
+  // Multi-image carousel
+  if (images.length > 1 && !imgError) {
+    const isSingle = perPage === 1
+    return (
+      <div className="w-full h-full flex flex-col bg-[#080c16]">
+        <div className={`flex-1 min-h-0 p-2 ${isSingle ? '' : 'grid grid-cols-3 gap-1.5'}`}>
+          {currentImages.map((src, i) => (
+            <div
+              key={`${page}-${i}`}
+              className={`relative overflow-hidden bg-[#0d1321] ${isSingle ? 'w-full h-full rounded-md' : 'rounded-md'}`}
+              style={{ animation: 'cardIn 0.3s cubic-bezier(0.16,1,0.3,1) both' }}
+            >
+              <img
+                src={src}
+                alt={`${project.title} ${page * perPage + i + 1}`}
+                className={`w-full h-full ${isSingle ? 'object-cover' : 'object-contain'}`}
+                onError={() => setImgError(true)}
+              />
+            </div>
+          ))}
+        </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pb-2 pt-1 shrink-0">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={e => { e.stopPropagation(); setPage(i) }}
+                className="transition-all duration-300"
+                style={{
+                  height: 5,
+                  width: page === i ? 18 : 5,
+                  borderRadius: 9999,
+                  background: page === i ? project.color : '#1e2d40',
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Single image
   if (!imgError) {
     return (
       <div className="relative w-full h-full">
@@ -251,6 +339,7 @@ function ProjectThumbnail({ project, tall = false }: { project: Project; tall?: 
     )
   }
 
+  // Fallback placeholder
   return (
     <div className="w-full h-full flex flex-col items-center justify-center relative"
       style={{ background: 'linear-gradient(135deg, #080c16, #0d1321)' }}
@@ -305,7 +394,10 @@ function ProjectCard({ project, onClick }: { project: Project; onClick: () => vo
       }}
     >
       {/* Thumbnail */}
-      <div className="relative h-48 overflow-hidden bg-[#080c16] shrink-0">
+      <div
+        className="relative overflow-hidden bg-[#080c16] shrink-0"
+        style={{ height: '192px' }}
+      >
         <ProjectThumbnail project={project} />
 
         {/* Category badge */}
@@ -317,14 +409,14 @@ function ProjectCard({ project, onClick }: { project: Project; onClick: () => vo
         </div>
 
         {/* Filename bottom overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 bg-gradient-to-t from-[#0d1321] via-[#0d1321]/60 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 bg-gradient-to-t from-[#0d1321] via-[#0d1321]/60 to-transparent pointer-events-none">
           <span className="text-[10px] font-mono" style={{ color: extColors[project.ext] || '#94a3b8' }}>
             {project.filename}<span className="opacity-60">{project.ext}</span>
           </span>
         </div>
 
         {/* Hover: "open file" hint */}
-        <div className="absolute inset-0 bg-[#00d4ff]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        <div className="absolute inset-0 bg-[#00d4ff]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
           <div className="bg-[#0a0e1a]/90 border border-[#00d4ff]/40 rounded px-3 py-1.5 text-[11px] font-mono text-[#00d4ff] flex items-center gap-1.5 backdrop-blur-sm">
             <span>◈</span> open file
           </div>
@@ -432,7 +524,11 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
         <div className="border-r border-[#1e2d40] flex flex-col bg-[#080c16]">
 
           {/* Thumbnail */}
-          <div className="relative h-56 border-b border-[#1e2d40] overflow-hidden shrink-0">
+          <div className="relative border-b border-[#1e2d40] overflow-hidden shrink-0" style={
+            project.images && project.images.length > 1 && project.imagePerPage === 1
+              ? { aspectRatio: '16/9' }
+              : { height: '240px' }
+          }>
             <ProjectThumbnail project={project} tall />
             {/* Overlay bar */}
             <div className="absolute top-0 left-0 right-0 flex items-center gap-2 px-4 py-2 bg-[#0d1321]/90 backdrop-blur-sm border-b border-[#1e2d40]/60 z-10">
