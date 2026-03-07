@@ -23,9 +23,9 @@ const quickLinks = [
 ]
 
 const stats = [
-  { label: 'Repositories', value: '14',      icon: '⬡', color: '#00d4ff',  desc: 'on GitHub' },
+  { label: 'Repositories', value: '14+',      icon: '⬡', color: '#00d4ff',  desc: 'on GitHub' },
   { label: 'Tech Stack',   value: '20+',     icon: '⚙', color: '#a5f3a5',  desc: 'languages & tools' },
-  { label: 'Projects',     value: '5+',      icon: '◈', color: '#fbbf24',  desc: 'shipped & live' },
+  { label: 'Projects',     value: '10+',      icon: '◈', color: '#fbbf24',  desc: 'shipped & live' },
   { label: 'Location',     value: 'Dhaka',   icon: '📍', color: '#f472b6', desc: 'Bangladesh 🇧🇩' },
 ]
 
