@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 
-
 interface Project {
   id: string
   filename: string
@@ -28,7 +27,7 @@ const projects: Project[] = [
     filename: '29CardGame_RL',
     ext: '.py',
     title: 'Policy Development for 29 Card Game - RL Agent',
-    description: 'Developing a reinforcement learning agent to master the 29 card game, utilizing deep Q-networks and curriculum learning for strategic gameplay.',
+    description: 'Developing a reinforcement learning agent to master the 29 card game.',
     longDesc: 'RL experiments for the classic 29 card game. AI agents learn game strategy through curriculum-based self-play against random, rule-based, and learned opponents.',
     tech: ['Python', 'PyTorch', 'DQN', 'Self-Play', 'Curriculum Learning'],
     color: '#818cf8',
@@ -37,10 +36,7 @@ const projects: Project[] = [
     status: 'experiment',
     github: 'https://github.com/MRGDFK/reinforcement_learning_agent_for_twenty_nine_card_game',
     thumbnail: '/projects/RL 1.png',
-    images: [
-      '/projects/RL 1.png',
-      '/projects/RL 2.png',
-    ],
+    images: ['/projects/RL 1.png', '/projects/RL 2.png'],
     imagePerPage: 1,
     lines: [
       '# RL Agent for 29 Card Game',
@@ -70,14 +66,7 @@ const projects: Project[] = [
     status: 'completed',
     github: 'https://github.com/MRGDFK/URBAN_NEST',
     thumbnail: '/projects/UN 1.png',
-    images: [
-      '/projects/UN 1.png',
-      '/projects/UN 2.png',
-      '/projects/UN 3.png',
-      '/projects/UN 4.png',
-      '/projects/UN 5.png',
-      '/projects/UN 6.png',
-    ],
+    images: ['/projects/UN 1.png','/projects/UN 2.png','/projects/UN 3.png','/projects/UN 4.png','/projects/UN 5.png','/projects/UN 6.png'],
     imagePerPage: 1,
     lines: [
       '// Real Estate Listing Platform',
@@ -106,14 +95,8 @@ const projects: Project[] = [
     status: 'completed',
     github: 'https://github.com/MRGDFK/TaskZen',
     thumbnail: '/projects/TaskZen 1.jpg',
-    images: [
-      '/projects/TaskZen 1.jpg',
-      '/projects/TaskZen 2.jpg',
-      '/projects/TaskZen 3.jpg',
-      '/projects/TaskZen 4.jpg',
-      '/projects/TaskZen 5.jpg',
-      '/projects/TaskZen 6.jpg',
-    ],
+    images: ['/projects/TaskZen 1.jpg','/projects/TaskZen 2.jpg','/projects/TaskZen 3.jpg','/projects/TaskZen 4.jpg','/projects/TaskZen 5.jpg','/projects/TaskZen 6.jpg'],
+    imagePerPage: 3,
     lines: [
       '# TaskZen - Android Task Manager',
       '',
@@ -166,15 +149,7 @@ const projects: Project[] = [
     status: 'completed',
     github: 'https://github.com/MRGDFK/SEN_pi--Demon-Slayer',
     thumbnail: '/projects/DS 1.jpg',
-    images: [
-      '/projects/DS 1.jpg',
-      '/projects/DS 2.jpg',
-      '/projects/DS 3.jpg',
-      '/projects/DS 4.jpg',
-      '/projects/DS 5.jpg',
-      '/projects/DS 6.jpg',
-      '/projects/DS 7.jpg',
-    ],
+    images: ['/projects/DS 1.jpg','/projects/DS 2.jpg','/projects/DS 3.jpg','/projects/DS 4.jpg','/projects/DS 5.jpg','/projects/DS 6.jpg','/projects/DS 7.jpg'],
     imagePerPage: 1,
     lines: [
       '#include <stdio.h>',
@@ -205,14 +180,7 @@ const projects: Project[] = [
     status: 'completed',
     github: 'https://github.com/MRGDFK/UrbanNest',
     thumbnail: '/projects/UN 1.png',
-    images: [
-      '/projects/UN 1.png',
-      '/projects/UN 2.png',
-      '/projects/UN 3.png',
-      '/projects/UN 4.png',
-      '/projects/UN 5.png',
-      '/projects/UN 6.png',
-    ],
+    images: ['/projects/UN 1.png','/projects/UN 2.png','/projects/UN 3.png','/projects/UN 4.png','/projects/UN 5.png','/projects/UN 6.png'],
     imagePerPage: 1,
     lines: [
       '<?php',
@@ -270,80 +238,120 @@ function BackIcon() {
   )
 }
 
-// ─── Thumbnail ───────────────────────────────────────────────────────────────
+// ─── Thumbnail with hover arrows ─────────────────────────────────────────────
 function ProjectThumbnail({ project, tall = false }: { project: Project; tall?: boolean }) {
   const [imgError, setImgError] = useState(false)
   const [page, setPage] = useState(0)
 
   const images = project.images ?? []
-  const perPage = project.imagePerPage ?? 3
+  const perPage = project.imagePerPage ?? 1
   const totalPages = Math.ceil(images.length / perPage)
   const currentImages = images.slice(page * perPage, (page + 1) * perPage)
+  const isGrid = perPage > 1
 
-  // Multi-image carousel
-  if (images.length > 1 && !imgError) {
-    const isSingle = perPage === 1
+  const prev = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => (p - 1 + totalPages) % totalPages) }
+  const next = (e: React.MouseEvent) => { e.stopPropagation(); setPage(p => (p + 1) % totalPages) }
+
+  if (images.length > 0 && !imgError) {
     return (
-      <div className="w-full h-full flex flex-col bg-[#080c16]">
-        <div className={`flex-1 min-h-0 p-2 ${isSingle ? '' : 'grid grid-cols-3 gap-1.5'}`}>
-          {currentImages.map((src, i) => (
-            <div
-              key={`${page}-${i}`}
-              className={`relative overflow-hidden bg-[#0d1321] ${isSingle ? 'w-full h-full rounded-md' : 'rounded-md'}`}
-              style={{ animation: 'cardIn 0.3s cubic-bezier(0.16,1,0.3,1) both' }}
-            >
-              <img
-                src={src}
-                alt={`${project.title} ${page * perPage + i + 1}`}
-                className={`w-full h-full ${isSingle ? 'object-cover' : 'object-contain'}`}
-                onError={() => setImgError(true)}
-              />
-            </div>
-          ))}
-        </div>
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 pb-2 pt-1 shrink-0">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={e => { e.stopPropagation(); setPage(i) }}
-                className="transition-all duration-300"
-                style={{
-                  height: 5,
-                  width: page === i ? 18 : 5,
-                  borderRadius: 9999,
-                  background: page === i ? project.color : '#1e2d40',
-                }}
-              />
+      <div
+        className="relative w-full h-full group/thumb"
+        style={{
+          background: '#080c16',
+          ...(isGrid ? {
+            backgroundImage: `linear-gradient(${project.color}06 1px,transparent 1px),linear-gradient(90deg,${project.color}06 1px,transparent 1px)`,
+            backgroundSize: '18px 18px',
+          } : {}),
+        }}
+      >
+        {/* Images */}
+        {isGrid ? (
+          // 3-up portrait grid
+          <div className="absolute inset-0 flex items-center gap-2 px-3 py-3">
+            {currentImages.map((src, i) => (
+              <div key={page * perPage + i} className="relative flex-1 h-full rounded-lg overflow-hidden border border-white/10 shadow-lg">
+                <img src={src} alt={`${project.title} ${page * perPage + i + 1}`}
+                  className="w-full h-full object-contain"
+                  onError={() => setImgError(true)} />
+                <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full bg-black/40 pointer-events-none" />
+              </div>
+            ))}
+            {/* fill empty slots */}
+            {currentImages.length < perPage && Array(perPage - currentImages.length).fill(0).map((_, i) => (
+              <div key={`empty-${i}`} className="flex-1 h-full rounded-lg border border-white/5 opacity-20"
+                style={{ background: project.color + '08' }} />
             ))}
           </div>
+        ) : (
+          // Single full-bleed with object-contain (no crop)
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src={currentImages[0]} alt={`${project.title} ${page + 1}`}
+              className="w-full h-full object-contain"
+              onError={() => setImgError(true)} />
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px)' }} />
+          </div>
+        )}
+
+        {/* Arrows — hover only, FIX 2 & 3 */}
+        {totalPages > 1 && (
+          <>
+            <button onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-black/75 border border-white/20 text-white text-lg leading-none
+                         opacity-0 group-hover/thumb:opacity-100 transition-all duration-200 hover:scale-110 hover:bg-black select-none">
+              ‹
+            </button>
+            <button onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-7 h-7 flex items-center justify-center rounded-full bg-black/75 border border-white/20 text-white text-lg leading-none
+                         opacity-0 group-hover/thumb:opacity-100 transition-all duration-200 hover:scale-110 hover:bg-black select-none">
+              ›
+            </button>
+            {/* page counter — hover only */}
+            <div className="absolute top-2 right-2 z-20 text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/65 border border-white/10
+                            opacity-0 group-hover/thumb:opacity-100 transition-opacity"
+              style={{ color: project.color }}>
+              {page + 1}/{totalPages}
+            </div>
+
+            {/* Dot / pill indicators — always visible at bottom */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={e => { e.stopPropagation(); setPage(i) }}
+                  className="transition-all duration-300 rounded-full"
+                  style={{
+                    height: 5,
+                    width: page === i ? 18 : 5,
+                    background: page === i ? project.color : 'rgba(255,255,255,0.25)',
+                    boxShadow: page === i ? `0 0 6px ${project.color}` : 'none',
+                  }}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     )
   }
 
-  // Single image
+  // Single thumbnail fallback
   if (!imgError) {
     return (
-      <div className="relative w-full h-full">
-        <img
-          src={project.thumbnail}
-          alt={project.title}
-          className="w-full h-full object-cover object-top"
-          onError={() => setImgError(true)}
-        />
+      <div className="relative w-full h-full bg-[#080c16]">
+        <img src={project.thumbnail} alt={project.title}
+          className="w-full h-full object-contain"
+          onError={() => setImgError(true)} />
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px)' }}
-        />
+          style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px)' }} />
       </div>
     )
   }
 
-  // Fallback placeholder
+  // Placeholder
   return (
     <div className="w-full h-full flex flex-col items-center justify-center relative"
-      style={{ background: 'linear-gradient(135deg, #080c16, #0d1321)' }}
-    >
+      style={{ background: 'linear-gradient(135deg, #080c16, #0d1321)' }}>
       <div className="absolute inset-0" style={{
         backgroundImage: `linear-gradient(${project.color}06 1px,transparent 1px),linear-gradient(90deg,${project.color}06 1px,transparent 1px)`,
         backgroundSize: '20px 20px',
@@ -354,9 +362,7 @@ function ProjectThumbnail({ project, tall = false }: { project: Project; tall?: 
           <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]/70" />
           <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]/70" />
           <div className="flex-1 mx-2 h-4 rounded bg-[#1e2d40] flex items-center px-2">
-            <span className="text-[8px] text-[#334155] font-mono truncate">
-              {project.live || `github.com/MRGDFK`}
-            </span>
+            <span className="text-[8px] text-[#334155] font-mono truncate">{project.live || 'github.com/MRGDFK'}</span>
           </div>
         </div>
         <div className="bg-[#080c16] p-4 space-y-2">
@@ -378,12 +384,12 @@ function ProjectThumbnail({ project, tall = false }: { project: Project; tall?: 
   )
 }
 
-// ─── Card (grid view) ─────────────────────────────────────────────────────────
+// ─── Card — FIX 1: h-full + fixed thumbnail height ───────────────────────────
 function ProjectCard({ project, onClick }: { project: Project; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="group flex flex-col rounded-xl overflow-hidden border border-[#1e2d40] bg-[#0d1321] cursor-pointer transition-all duration-300 hover:-translate-y-1"
+      className="group flex flex-col h-full rounded-xl overflow-hidden border border-[#1e2d40] bg-[#0d1321] cursor-pointer transition-all duration-300 hover:-translate-y-1"
       onMouseEnter={e => {
         e.currentTarget.style.borderColor = project.color + '55'
         e.currentTarget.style.boxShadow = `0 8px 30px ${project.color}18`
@@ -393,95 +399,63 @@ function ProjectCard({ project, onClick }: { project: Project; onClick: () => vo
         e.currentTarget.style.boxShadow = ''
       }}
     >
-      {/* Thumbnail */}
-      <div
-        className="relative overflow-hidden bg-[#080c16] shrink-0"
-        style={{ height: '192px' }}
-      >
+      {/* Fixed-height thumbnail — never shrinks */}
+      <div className="relative overflow-hidden bg-[#080c16] shrink-0" style={{ height: 200 }}>
         <ProjectThumbnail project={project} />
 
-        {/* Category badge */}
-        <div
-          className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded text-[10px] font-mono font-semibold backdrop-blur-sm"
-          style={{ background: statusColors[project.status].bg, color: project.color, border: `1px solid ${project.color}35` }}
-        >
+        <div className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded text-[10px] font-mono font-semibold backdrop-blur-sm pointer-events-none"
+          style={{ background: statusColors[project.status].bg, color: project.color, border: `1px solid ${project.color}35` }}>
           {project.categoryLabel}
         </div>
 
-        {/* Filename bottom overlay */}
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 bg-gradient-to-t from-[#0d1321] via-[#0d1321]/60 to-transparent pointer-events-none">
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 bg-gradient-to-t from-[#0d1321] via-[#0d1321]/60 to-transparent pointer-events-none z-10">
           <span className="text-[10px] font-mono" style={{ color: extColors[project.ext] || '#94a3b8' }}>
             {project.filename}<span className="opacity-60">{project.ext}</span>
           </span>
         </div>
 
-        {/* Hover: "open file" hint */}
-        <div className="absolute inset-0 bg-[#00d4ff]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 bg-[#00d4ff]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-20">
           <div className="bg-[#0a0e1a]/90 border border-[#00d4ff]/40 rounded px-3 py-1.5 text-[11px] font-mono text-[#00d4ff] flex items-center gap-1.5 backdrop-blur-sm">
             <span>◈</span> open file
           </div>
         </div>
       </div>
 
-      {/* Card body */}
+      {/* Body — flex-1 so all cards stretch uniformly */}
       <div className="flex flex-col flex-1 p-5">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className="text-[#e2e8f0] font-bold text-base leading-tight group-hover:text-white transition-colors">
-            {project.title}
-          </h3>
-          <span
-            className="shrink-0 text-[9px] px-2 py-0.5 rounded font-mono mt-0.5"
-            style={{ background: statusColors[project.status].bg, color: statusColors[project.status].text }}
-          >
+          <h3 className="text-[#e2e8f0] font-bold text-base leading-tight group-hover:text-white transition-colors">{project.title}</h3>
+          <span className="shrink-0 text-[9px] px-2 py-0.5 rounded font-mono mt-0.5"
+            style={{ background: statusColors[project.status].bg, color: statusColors[project.status].text }}>
             {statusColors[project.status].label}
           </span>
         </div>
 
-        <p className="text-[#94a3b8] text-xs leading-relaxed mb-4 flex-1 line-clamp-3">
-          {project.longDesc}
-        </p>
+        <p className="text-[#94a3b8] text-xs leading-relaxed mb-4 flex-1 line-clamp-3">{project.longDesc}</p>
 
         <div className="flex flex-wrap gap-1.5 mb-4">
           {project.tech.slice(0, 4).map((t) => (
-            <span key={t} className="text-[10px] px-2 py-0.5 rounded border border-[#1e2d40] text-[#475569] bg-[#080c16] font-mono">
-              {t}
-            </span>
+            <span key={t} className="text-[10px] px-2 py-0.5 rounded border border-[#1e2d40] text-[#475569] bg-[#080c16] font-mono">{t}</span>
           ))}
           {project.tech.length > 4 && (
-            <span className="text-[10px] px-2 py-0.5 rounded border border-[#1e2d40] text-[#334155] bg-[#080c16] font-mono">
-              +{project.tech.length - 4}
-            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded border border-[#1e2d40] text-[#334155] bg-[#080c16] font-mono">+{project.tech.length - 4}</span>
           )}
         </div>
 
-        <div className="flex items-center gap-3 pt-3 border-t border-[#1e2d40]">
-          {project.github && (
-            <span className="flex items-center gap-1.5 text-xs text-[#475569] font-mono">
-              <GitHubIcon /> Code
-            </span>
-          )}
-          {project.live && (
-            <span className="flex items-center gap-1.5 text-xs text-[#00d4ff] font-mono">
-              <ExternalIcon /> Live
-            </span>
-          )}
-          <span className="ml-auto text-[10px] text-[#334155] font-mono group-hover:text-[#00d4ff]/60 transition-colors">
-            click to open →
-          </span>
+        <div className="flex items-center gap-3 pt-3 border-t border-[#1e2d40] mt-auto">
+          {project.github && <span className="flex items-center gap-1.5 text-xs text-[#475569] font-mono"><GitHubIcon /> Code</span>}
+          {project.live && <span className="flex items-center gap-1.5 text-xs text-[#00d4ff] font-mono"><ExternalIcon /> Live</span>}
+          <span className="ml-auto text-[10px] text-[#334155] font-mono group-hover:text-[#00d4ff]/60 transition-colors">click to open →</span>
         </div>
       </div>
     </div>
   )
 }
 
-// ─── Detail view (IDE split layout) ──────────────────────────────────────────
+// ─── Detail view ──────────────────────────────────────────────────────────────
 function ProjectDetail({ project, onClose, onNext, onPrev }: {
-  project: Project
-  onClose: () => void
-  onNext: () => void
-  onPrev: () => void
+  project: Project; onClose: () => void; onNext: () => void; onPrev: () => void
 }) {
-  // Escape key to close
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
@@ -490,25 +464,15 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
 
   return (
     <div className="animate-fade-in">
-      {/* Detail tab bar */}
       <div className="flex items-center gap-0 border-b border-[#1e2d40] bg-[#0d1321]">
-        {/* Back button */}
-        <button
-          onClick={onClose}
-          className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-mono text-[#475569] hover:text-[#00d4ff] border-r border-[#1e2d40] transition-colors shrink-0"
-        >
-          <BackIcon />
-          all projects
+        <button onClick={onClose}
+          className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-mono text-[#475569] hover:text-[#00d4ff] border-r border-[#1e2d40] transition-colors shrink-0">
+          <BackIcon /> all projects
         </button>
-
-        {/* Active file tab */}
         <div className="flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-mono border-b-2 border-[#00d4ff] text-[#e2e8f0]">
           <span className="text-[10px]" style={{ color: extColors[project.ext] }}>●</span>
-          {project.filename}
-          <span style={{ color: extColors[project.ext] }} className="opacity-60">{project.ext}</span>
+          {project.filename}<span style={{ color: extColors[project.ext] }} className="opacity-60">{project.ext}</span>
         </div>
-
-        {/* Prev / next nav */}
         <div className="ml-auto flex items-center gap-1 px-3">
           <button onClick={onPrev} className="px-2 py-1 text-[#475569] hover:text-[#94a3b8] transition-colors text-xs font-mono">← prev</button>
           <span className="text-[#1e2d40]">|</span>
@@ -517,35 +481,23 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
         </div>
       </div>
 
-      {/* Split pane */}
-      <div className="grid md:grid-cols-2 border-b border-[#1e2d40]" style={{ minHeight: '500px' }}>
-
-        {/* LEFT — thumbnail + code */}
+      <div className="grid md:grid-cols-2 border-b border-[#1e2d40]" style={{ minHeight: 500 }}>
         <div className="border-r border-[#1e2d40] flex flex-col bg-[#080c16]">
-
-          {/* Thumbnail */}
-          <div className="relative border-b border-[#1e2d40] overflow-hidden shrink-0" style={
-            project.images && project.images.length > 1 && project.imagePerPage === 1
-              ? { aspectRatio: '16/9' }
-              : { height: '240px' }
-          }>
+          {/* FIX 4: fixed height, object-contain, consistent across all projects */}
+          <div className="relative border-b border-[#1e2d40] overflow-hidden shrink-0" style={{ height: 260 }}>
             <ProjectThumbnail project={project} tall />
-            {/* Overlay bar */}
-            <div className="absolute top-0 left-0 right-0 flex items-center gap-2 px-4 py-2 bg-[#0d1321]/90 backdrop-blur-sm border-b border-[#1e2d40]/60 z-10">
+            <div className="absolute top-0 left-0 right-0 flex items-center gap-2 px-4 py-2 bg-[#0d1321]/90 backdrop-blur-sm border-b border-[#1e2d40]/60 z-20 pointer-events-none">
               <span className="text-[10px]" style={{ color: extColors[project.ext] }}>◈</span>
               <span className="text-xs text-[#475569] font-mono">{project.filename}{project.ext}</span>
-              <div className="ml-auto flex items-center gap-2">
-                {project.live && (
-                  <a href={project.live} target="_blank" rel="noopener noreferrer"
-                    className="text-[10px] font-mono text-[#00d4ff] hover:underline flex items-center gap-1">
-                    <ExternalIcon /> live preview
-                  </a>
-                )}
-              </div>
+              {project.live && (
+                <a href={project.live} target="_blank" rel="noopener noreferrer"
+                  className="ml-auto text-[10px] font-mono text-[#00d4ff] hover:underline flex items-center gap-1 pointer-events-auto">
+                  <ExternalIcon /> live preview
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Code block */}
           <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1e2d40] text-xs text-[#475569] bg-[#0d1321] shrink-0">
             <span className="text-[#334155]">source</span>
             <span className="ml-auto text-[#1e2d40]">{project.lines.length} lines</span>
@@ -558,17 +510,13 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
                   line.startsWith('//') || line.startsWith('#') ? 'text-[#334155]' :
                   line.startsWith('export') || line.startsWith('import') || line.startsWith('class') || line.startsWith('int ') || line.startsWith('#include') ? 'text-[#c792ea]' :
                   line.includes('":') ? 'text-[#94a3b8]' :
-                  line.includes('"') ? 'text-[#a5f3a5]' :
-                  'text-[#94a3b8]'
-                }>
-                  {line || '\u00A0'}
-                </span>
+                  line.includes('"') ? 'text-[#a5f3a5]' : 'text-[#94a3b8]'
+                }>{line || '\u00A0'}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* RIGHT — project info */}
         <div className="p-7 bg-[#0a0e1a] overflow-auto">
           <div className="flex items-start justify-between gap-3 mb-5">
             <div>
@@ -576,63 +524,48 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
               <h2 className="text-[#e2e8f0] font-bold text-2xl leading-tight">{project.title}</h2>
               <p className="text-[#475569] text-sm mt-1">{project.description}</p>
             </div>
-            <span
-              className="text-[10px] px-2.5 py-1 rounded font-mono shrink-0 mt-1"
-              style={{ background: statusColors[project.status].bg, color: statusColors[project.status].text }}
-            >
+            <span className="text-[10px] px-2.5 py-1 rounded font-mono shrink-0 mt-1"
+              style={{ background: statusColors[project.status].bg, color: statusColors[project.status].text }}>
               {statusColors[project.status].label}
             </span>
           </div>
 
           <p className="text-[#94a3b8] text-sm leading-relaxed mb-6">{project.longDesc}</p>
 
-          {/* Tech stack */}
           <div className="mb-6">
             <div className="text-[10px] text-[#334155] uppercase tracking-widest mb-3 font-mono">// tech stack</div>
             <div className="flex flex-wrap gap-2">
               {project.tech.map((t) => (
-                <span key={t}
-                  className="text-xs px-3 py-1.5 rounded border border-[#1e2d40] text-[#94a3b8] bg-[#0d1321] font-mono hover:border-[#2a3a50] transition-colors"
-                >
-                  {t}
-                </span>
+                <span key={t} className="text-xs px-3 py-1.5 rounded border border-[#1e2d40] text-[#94a3b8] bg-[#0d1321] font-mono hover:border-[#2a3a50] transition-colors">{t}</span>
               ))}
             </div>
           </div>
 
-          {/* Links */}
           <div className="mb-6">
             <div className="text-[10px] text-[#334155] uppercase tracking-widest mb-3 font-mono">// links</div>
             <div className="flex gap-3 flex-wrap">
               {project.github && (
                 <a href={project.github} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm border border-[#1e2d40] rounded text-[#94a3b8] hover:text-[#00d4ff] hover:border-[#00d4ff]/40 transition-all font-mono"
-                >
+                  className="flex items-center gap-2 px-4 py-2 text-sm border border-[#1e2d40] rounded text-[#94a3b8] hover:text-[#00d4ff] hover:border-[#00d4ff]/40 transition-all font-mono">
                   <GitHubIcon /> GitHub
                 </a>
               )}
               {project.live && (
                 <a href={project.live} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm border border-[#00d4ff]/30 rounded text-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all font-mono"
-                >
+                  className="flex items-center gap-2 px-4 py-2 text-sm border border-[#00d4ff]/30 rounded text-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all font-mono">
                   <ExternalIcon /> Live Site
                 </a>
               )}
             </div>
           </div>
 
-          {/* All projects mini list */}
           <div>
             <div className="text-[10px] text-[#334155] uppercase tracking-widest mb-3 font-mono">// other projects</div>
             <div className="space-y-1">
               {projects.filter(p => p.id !== project.id).map(p => (
-                <button key={p.id} onClick={() => {
-                  // This bubbles up but we handle it via a custom event
-                  const e = new CustomEvent('open-project', { detail: p.id })
-                  window.dispatchEvent(e)
-                }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded border border-transparent hover:border-[#1e2d40] hover:bg-[#0d1321] transition-all text-left group/item"
-                >
+                <button key={p.id}
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-project', { detail: p.id }))}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded border border-transparent hover:border-[#1e2d40] hover:bg-[#0d1321] transition-all text-left group/item">
                   <span className="text-[10px]" style={{ color: extColors[p.ext] }}>◈</span>
                   <span className="text-xs font-mono text-[#475569] group-hover/item:text-[#94a3b8] transition-colors">
                     {p.filename}<span style={{ color: extColors[p.ext] }} className="opacity-60">{p.ext}</span>
@@ -655,7 +588,6 @@ export default function Projects() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
 
-  // Sliding pill for filter tabs
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const [pillStyle, setPillStyle] = useState({ left: 0, width: 0, opacity: 0 })
@@ -666,31 +598,15 @@ export default function Projects() {
 
   const openProject = (id: string) => {
     setIsAnimating(true)
-    setTimeout(() => {
-      setSelectedId(id)
-      setIsAnimating(false)
-    }, 150)
+    setTimeout(() => { setSelectedId(id); setIsAnimating(false) }, 150)
   }
-
   const closeProject = () => {
     setIsAnimating(true)
-    setTimeout(() => {
-      setSelectedId(null)
-      setIsAnimating(false)
-    }, 150)
+    setTimeout(() => { setSelectedId(null); setIsAnimating(false) }, 150)
   }
+  const goNext = () => openProject(projects[(selectedIndex + 1) % projects.length].id)
+  const goPrev = () => openProject(projects[(selectedIndex - 1 + projects.length) % projects.length].id)
 
-  const goNext = () => {
-    const next = projects[(selectedIndex + 1) % projects.length]
-    openProject(next.id)
-  }
-
-  const goPrev = () => {
-    const prev = projects[(selectedIndex - 1 + projects.length) % projects.length]
-    openProject(prev.id)
-  }
-
-  // Listen for internal navigation from detail panel
   useEffect(() => {
     const handler = (e: Event) => openProject((e as CustomEvent).detail)
     window.addEventListener('open-project', handler)
@@ -701,10 +617,8 @@ export default function Projects() {
     acc[f] = f === 'all' ? projects.length : projects.filter(p => p.category === f).length
     return acc
   }, {} as Record<Filter, number>)
-
   const visibleFilters = filters.filter(f => counts[f] > 0)
 
-  // Update sliding pill position whenever active filter changes
   useLayoutEffect(() => {
     const idx = visibleFilters.indexOf(activeFilter)
     const btn = tabRefs.current[idx]
@@ -716,88 +630,51 @@ export default function Projects() {
     }
   }, [activeFilter])
 
-  const handleFilterChange = (f: Filter) => {
-    setActiveFilter(f)
-    setFilterKey(k => k + 1)
-  }
+  const handleFilterChange = (f: Filter) => { setActiveFilter(f); setFilterKey(k => k + 1) }
 
   return (
-    <div
-      className="transition-opacity duration-150"
-      style={{ opacity: isAnimating ? 0 : 1 }}
-    >
+    <div className="transition-opacity duration-150" style={{ opacity: isAnimating ? 0 : 1 }}>
       {selectedProject ? (
-        /* ── DETAIL VIEW ── */
         <div className="p-6 md:p-10 max-w-6xl mx-auto">
-          <ProjectDetail
-            project={selectedProject}
-            onClose={closeProject}
-            onNext={goNext}
-            onPrev={goPrev}
-          />
+          <ProjectDetail project={selectedProject} onClose={closeProject} onNext={goNext} onPrev={goPrev} />
         </div>
       ) : (
-        /* ── GRID VIEW ── */
         <div className="p-6 md:p-10 max-w-6xl mx-auto">
-          {/* Header */}
           <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
             <div>
               <div className="text-[#475569] text-xs font-mono mb-2">// Projects.ts</div>
               <h2 className="text-[#e2e8f0] text-2xl font-bold">Featured Projects</h2>
               <p className="text-[#475569] text-sm mt-1">A selection of my work in Software Engineering and AI.</p>
             </div>
-
-            {/* Filter tabs */}
             <div ref={containerRef} className="relative flex items-center gap-1 border border-[#1e2d40] rounded-lg p-1 bg-[#0d1321]">
-              {/* Sliding pill */}
-              <div
-                className="absolute top-1 h-[calc(100%-8px)] rounded-md bg-[#00d4ff] pointer-events-none"
-                style={{
-                  left: pillStyle.left,
-                  width: pillStyle.width,
-                  opacity: pillStyle.opacity,
-                  transition: 'left 0.25s cubic-bezier(0.16,1,0.3,1), width 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease',
-                }}
-              />
+              <div className="absolute top-1 h-[calc(100%-8px)] rounded-md bg-[#00d4ff] pointer-events-none"
+                style={{ left: pillStyle.left, width: pillStyle.width, opacity: pillStyle.opacity,
+                  transition: 'left 0.25s cubic-bezier(0.16,1,0.3,1), width 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease' }} />
               {visibleFilters.map((f, idx) => (
-                <button
-                  key={f}
-                  ref={el => { tabRefs.current[idx] = el }}
+                <button key={f} ref={el => { tabRefs.current[idx] = el }}
                   onClick={() => handleFilterChange(f)}
                   className={`relative z-10 px-3 py-1.5 text-xs font-mono rounded-md capitalize transition-colors duration-200 ${
-                    activeFilter === f ? 'text-[#0a0e1a] font-semibold' : 'text-[#475569] hover:text-[#94a3b8]'
-                  }`}
-                >
+                    activeFilter === f ? 'text-[#0a0e1a] font-semibold' : 'text-[#475569] hover:text-[#94a3b8]'}`}>
                   {f}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Cards grid */}
-          <div key={filterKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* FIX 1: items-stretch so each row's cards match height */}
+          <div key={filterKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
             {filtered.map((project, i) => (
-              <div
-                key={project.id}
-                style={{ animation: `cardIn 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms both` }}
-              >
-                <ProjectCard
-                  project={project}
-                  onClick={() => openProject(project.id)}
-                />
+              <div key={project.id} className="flex"
+                style={{ animation: `cardIn 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms both` }}>
+                <ProjectCard project={project} onClick={() => openProject(project.id)} />
               </div>
             ))}
           </div>
 
-          {/* Footer */}
           <div className="mt-8 flex items-center gap-3">
             <div className="flex-1 h-px bg-[#1e2d40]" />
-            <a
-              href="https://github.com/MRGDFK"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-[#475569] hover:text-[#00d4ff] font-mono transition-colors"
-            >
+            <a href="https://github.com/MRGDFK" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs text-[#475569] hover:text-[#00d4ff] font-mono transition-colors">
               <span>⬡</span> view all on github <span className="opacity-50">↗</span>
             </a>
             <div className="flex-1 h-px bg-[#1e2d40]" />
