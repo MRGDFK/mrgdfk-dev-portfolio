@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0e1a;
+  --surface: #0d1321;
+  --panel: #111827;
+  --border: #1e2d40;
+  --cyan: #00d4ff;
+  --cyan-dim: #0099bb;
+  --cyan-glow: rgba(0, 212, 255, 0.12);
+  --blue-accent: #3b82f6;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Blueprint Grid Background */
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0;
+}
+
+.blueprint-grid-fine {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.025) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cyan-dim); }
+
+/* Terminal cursor blink */
+.cursor-blink::after {
+  content: '▋';
+  color: var(--cyan);
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Cyan glow effects */
+.glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.glow-box-cyan {
+  box-shadow: 0 0 0 1px var(--cyan), 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.glow-box-subtle {
+  box-shadow: 0 0 0 1px var(--border), inset 0 0 30px rgba(0, 212, 255, 0.02);
+}
+
+/* Tab active styles */
+.tab-active {
+  border-bottom: 2px solid var(--cyan);
+  background: var(--panel);
+  color: var(--text-primary);
+}
+
+.tab-inactive {
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+.tab-inactive:hover {
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.02);
+}
+
+/* File tree styles */
+.file-item {
+  transition: all 0.15s ease;
+}
+.file-item:hover {
+  background: rgba(0, 212, 255, 0.06);
+  color: var(--cyan);
+}
+.file-item.active {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+
+/* Typing animation */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* JSON syntax highlighting */
+.json-key { color: #00d4ff; }
+.json-string { color: #a5f3a5; }
+.json-number { color: #fbbf24; }
+.json-bool { color: #f472b6; }
+.json-bracket { color: #94a3b8; }
+
+/* Selection */
+::selection {
+  background: rgba(0, 212, 255, 0.2);
+  color: white;
+}
+
+/* Scanline overlay effect */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Status bar */
+.statusbar {
+  background: linear-gradient(90deg, #0a1628, #0d1f35);
+  border-top: 1px solid var(--border);
+}
