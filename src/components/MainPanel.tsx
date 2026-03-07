@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { Section } from '@/app/page'
 import TerminalHero from './sections/TerminalHero'
 import About from './sections/About'
@@ -24,6 +25,19 @@ const tabs: { section: Section; label: string; color: string }[] = [
 ]
 
 export default function MainPanel({ activeSection, onSelect, sidebarOpen, onToggleSidebar }: MainPanelProps) {
+  const [displaySection, setDisplaySection] = useState(activeSection)
+  const [contentVisible, setContentVisible] = useState(true)
+
+  useEffect(() => {
+    if (activeSection === displaySection) return
+    setContentVisible(false)
+    const t = setTimeout(() => {
+      setDisplaySection(activeSection)
+      setContentVisible(true)
+    }, 180)
+    return () => clearTimeout(t)
+  }, [activeSection])
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[#0a0e1a]">
       {/* Tab bar */}
@@ -44,14 +58,14 @@ export default function MainPanel({ activeSection, onSelect, sidebarOpen, onTogg
           <button
             key={tab.section}
             onClick={() => onSelect(tab.section)}
-            className={`flex items-center gap-1.5 px-4 h-9 text-[12px] whitespace-nowrap shrink-0 transition-all border-b-2 ${
+            className={`flex items-center gap-1.5 px-4 h-9 text-[12px] whitespace-nowrap shrink-0 transition-all duration-200 border-b-2 ${
               activeSection === tab.section
                 ? 'border-[#00d4ff] bg-[#0a0e1a] text-[#e2e8f0]'
                 : 'border-transparent text-[#475569] hover:text-[#94a3b8] hover:bg-white/[0.02]'
             }`}
           >
             <span
-              className="text-[10px]"
+              className="text-[10px] transition-colors duration-200"
               style={{ color: activeSection === tab.section ? tab.color : '#334155' }}
             >
               ●
@@ -69,18 +83,25 @@ export default function MainPanel({ activeSection, onSelect, sidebarOpen, onTogg
         <span>›</span>
         <span>src</span>
         <span>›</span>
-        <span className="text-[#475569]">{tabs.find(t => t.section === activeSection)?.label}</span>
+        <span className="text-[#475569]">{tabs.find(t => t.section === displaySection)?.label}</span>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto blueprint-grid-fine">
-        <div key={activeSection} className="animate-fade-in min-h-full">
-          {activeSection === 'intro' && <TerminalHero />}
-          {activeSection === 'about' && <About />}
-          {activeSection === 'projects' && <Projects />}
-          {activeSection === 'skills' && <Skills />}
-          {activeSection === 'education' && <Education />}
-          {activeSection === 'contact' && <Contact />}
+      <div
+        className="flex-1 overflow-y-auto blueprint-grid-fine"
+        style={{
+          opacity: contentVisible ? 1 : 0,
+          transform: contentVisible ? 'translateY(0)' : 'translateY(6px)',
+          transition: 'opacity 0.18s ease, transform 0.18s ease',
+        }}
+      >
+        <div key={displaySection} className="animate-fade-in min-h-full">
+          {displaySection === 'intro' && <TerminalHero />}
+          {displaySection === 'about' && <About />}
+          {displaySection === 'projects' && <Projects />}
+          {displaySection === 'skills' && <Skills />}
+          {displaySection === 'education' && <Education />}
+          {displaySection === 'contact' && <Contact />}
         </div>
       </div>
     </div>

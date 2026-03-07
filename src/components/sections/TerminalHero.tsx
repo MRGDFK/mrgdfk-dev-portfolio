@@ -1,5 +1,30 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import {
+  SiNextdotjs, SiReact, SiNodedotjs, SiExpress, SiPostgresql,
+  SiMongodb, SiDotnet, SiPython, SiTailwindcss, SiTypescript,
+  SiGit, SiFigma,
+} from 'react-icons/si'
+import { FaJava } from 'react-icons/fa'
+import { TbBrain } from 'react-icons/tb'
+import type { IconType } from 'react-icons'
+
+const techIcons: Record<string, IconType> = {
+  'next.js':                SiNextdotjs,
+  'react':                  SiReact,
+  'node.js':                SiNodedotjs,
+  'express':                SiExpress,
+  'postgresql':             SiPostgresql,
+  'mongodb':                SiMongodb,
+  'aspnet':                 SiDotnet,
+  'java':                   FaJava,
+  'python':                 SiPython,
+  'tailwindcss':            SiTailwindcss,
+  'typescript':             SiTypescript,
+  'git':                    SiGit,
+  'figma':                  SiFigma,
+  'reinforcement-learning': TbBrain,
+}
 
 const lines = [
   { delay: 0,    text: 'whoami',                                              type: 'cmd' },
@@ -175,10 +200,16 @@ export default function TerminalHero() {
                   <div className="text-[#94a3b8] pl-6">{line.text}</div>
                 )}
                 {line.type === 'output-dir' && (
-                  <div className="pl-6 flex flex-wrap gap-x-4 gap-y-0.5">
-                    {line.text.split('  ').map((item, j) => (
-                      <span key={j} className="text-[#a5f3a5]">{item}</span>
-                    ))}
+                  <div className="pl-6 flex flex-wrap gap-x-4 gap-y-1">
+                    {line.text.split('  ').map((item, j) => {
+                      const Icon = techIcons[item.trim()]
+                      return (
+                        <span key={j} className="flex items-center gap-1.5 text-[#a5f3a5]">
+                          {Icon && <Icon className="shrink-0 opacity-80" size={13} />}
+                          {item}
+                        </span>
+                      )
+                    })}
                   </div>
                 )}
                 {line.type === 'output-string' && (

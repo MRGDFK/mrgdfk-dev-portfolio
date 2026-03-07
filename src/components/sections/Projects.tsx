@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+
 
 interface Project {
   id: string
@@ -48,6 +49,38 @@ const projects: Project[] = [
     ],
   },
   {
+    id: 'urban-nest-php',
+    filename: 'URBAN_NEST_PHP',
+    ext: '.php',
+    title: 'Urban Nest (PHP Version)',
+    description: 'Real Estate Listing System',
+    longDesc: 'Full-stack real estate listing system built with PHP, MySQL, and JavaScript. Features property listing management, database-driven search, dynamic page rendering, and a responsive front-end.',
+    tech: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS'],
+    color: '#fb923c',
+    category: 'web',
+    categoryLabel: 'web',
+    status: 'completed',
+    github: 'https://github.com/MRGDFK/UrbanNest',
+    thumbnail: '/projects/urban-nest-php.png',
+    lines: [
+      '<?php',
+      '// Real Estate Listing System',
+      '',
+      'class PropertyListing {',
+      '  public function search($query) {',
+      '    $sql = "SELECT * FROM listings',
+      '            WHERE title LIKE ?";',
+      '    return $this->db->query($sql);',
+      '  }',
+      '',
+      '  public function render($data) {',
+      '    // Dynamic page rendering',
+      '    include "views/listing.php";',
+      '  }',
+      '}',
+    ],
+  },
+  {
     id: 'taskzen',
     filename: 'TaskZen',
     ext: '.md',
@@ -59,7 +92,7 @@ const projects: Project[] = [
     category: 'mobile',
     categoryLabel: 'mobile',
     status: 'completed',
-    github: 'https://github.com/MRGDFK',
+    github: 'https://github.com/MRGDFK/TaskZen',
     thumbnail: '/projects/taskzen.png',
     lines: [
       '# TaskZen - Android Task Manager',
@@ -103,15 +136,15 @@ const projects: Project[] = [
     id: 'rl-card',
     filename: '29CardGame_RL',
     ext: '.py',
-    title: '29 Card Game RL Agent',
-    description: 'Reinforcement Learning Experiments',
+    title: 'Policy Development for 29 Card Game - RL Agent',
+    description: 'Delevoping a reinforcement learning agent to master the 29 card game, utilizing deep Q-networks and curriculum learning for strategic gameplay.',
     longDesc: 'RL experiments for the classic 29 card game. AI agents learn game strategy through curriculum-based self-play against random, rule-based, and learned opponents.',
     tech: ['Python', 'PyTorch', 'DQN', 'Self-Play', 'Curriculum Learning'],
     color: '#818cf8',
     category: 'ai',
     categoryLabel: 'ai',
     status: 'experiment',
-    github: 'https://github.com/MRGDFK',
+    github: 'https://github.com/MRGDFK/reinforcement_learning_agent_for_twenty_nine_card_game',
     thumbnail: '/projects/rl-card.png',
     lines: [
       '# RL Agent for 29 Card Game',
@@ -169,7 +202,7 @@ const statusColors = {
 
 const extColors: Record<string, string> = {
   '.tsx': '#61dafb', '.ts': '#3b82f6', '.py': '#fbbf24',
-  '.md': '#94a3b8', '.c': '#fb7185',
+  '.md': '#94a3b8', '.c': '#fb7185', '.php': '#a78bfa',
 }
 
 function GitHubIcon() {
@@ -522,8 +555,14 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState<Filter>('all')
+  const [filterKey, setFilterKey] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
+
+  // Sliding pill for filter tabs
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [pillStyle, setPillStyle] = useState({ left: 0, width: 0, opacity: 0 })
 
   const filtered = activeFilter === 'all' ? projects : projects.filter(p => p.category === activeFilter)
   const selectedProject = projects.find(p => p.id === selectedId) ?? null
@@ -567,6 +606,25 @@ export default function Projects() {
     return acc
   }, {} as Record<Filter, number>)
 
+  const visibleFilters = filters.filter(f => counts[f] > 0)
+
+  // Update sliding pill position whenever active filter changes
+  useLayoutEffect(() => {
+    const idx = visibleFilters.indexOf(activeFilter)
+    const btn = tabRefs.current[idx]
+    const container = containerRef.current
+    if (btn && container) {
+      const cRect = container.getBoundingClientRect()
+      const bRect = btn.getBoundingClientRect()
+      setPillStyle({ left: bRect.left - cRect.left, width: bRect.width, opacity: 1 })
+    }
+  }, [activeFilter])
+
+  const handleFilterChange = (f: Filter) => {
+    setActiveFilter(f)
+    setFilterKey(k => k + 1)
+  }
+
   return (
     <div
       className="transition-opacity duration-150"
@@ -594,33 +652,44 @@ export default function Projects() {
             </div>
 
             {/* Filter tabs */}
-            <div className="flex items-center gap-1 border border-[#1e2d40] rounded-lg p-1 bg-[#0d1321]">
-              {filters.map((f) =>
-                counts[f] > 0 && (
-                  <button
-                    key={f}
-                    onClick={() => setActiveFilter(f)}
-                    className={`px-3 py-1.5 text-xs font-mono rounded-md transition-all capitalize ${
-                      activeFilter === f
-                        ? 'bg-[#00d4ff] text-[#0a0e1a] font-semibold'
-                        : 'text-[#475569] hover:text-[#94a3b8]'
-                    }`}
-                  >
-                    {f}
-                  </button>
-                )
-              )}
+            <div ref={containerRef} className="relative flex items-center gap-1 border border-[#1e2d40] rounded-lg p-1 bg-[#0d1321]">
+              {/* Sliding pill */}
+              <div
+                className="absolute top-1 h-[calc(100%-8px)] rounded-md bg-[#00d4ff] pointer-events-none"
+                style={{
+                  left: pillStyle.left,
+                  width: pillStyle.width,
+                  opacity: pillStyle.opacity,
+                  transition: 'left 0.25s cubic-bezier(0.16,1,0.3,1), width 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease',
+                }}
+              />
+              {visibleFilters.map((f, idx) => (
+                <button
+                  key={f}
+                  ref={el => { tabRefs.current[idx] = el }}
+                  onClick={() => handleFilterChange(f)}
+                  className={`relative z-10 px-3 py-1.5 text-xs font-mono rounded-md capitalize transition-colors duration-200 ${
+                    activeFilter === f ? 'text-[#0a0e1a] font-semibold' : 'text-[#475569] hover:text-[#94a3b8]'
+                  }`}
+                >
+                  {f}
+                </button>
+              ))}
             </div>
           </div>
 
           {/* Cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((project) => (
-              <ProjectCard
+          <div key={filterKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filtered.map((project, i) => (
+              <div
                 key={project.id}
-                project={project}
-                onClick={() => openProject(project.id)}
-              />
+                style={{ animation: `cardIn 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms both` }}
+              >
+                <ProjectCard
+                  project={project}
+                  onClick={() => openProject(project.id)}
+                />
+              </div>
             ))}
           </div>
 
