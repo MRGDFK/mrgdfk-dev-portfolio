@@ -3,3 +3,10 @@ node_modules/
 .env.local
 .env
 
+echo '
+# macOS junk files
+._*
+.DS_Store
+.AppleDouble
+.LSOverride
+' >> .gitignore
