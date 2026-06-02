@@ -175,3 +175,11 @@ body {
   background: linear-gradient(90deg, #0a1628, #0d1f35);
   border-top: 1px solid var(--border);
 }
+
+/* Hide scrollbar utility */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

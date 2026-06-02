@@ -30,16 +30,16 @@ export default function StatusBar({ activeSection }: { activeSection: Section })
           <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse" />
           <span className="text-[#00d4ff] font-medium">⎇ main</span>
         </span>
-        <span className="text-[#334155]">TypeScript</span>
-        <span className="text-[#334155]">UTF-8</span>
+        <span className="hidden sm:inline text-[#334155]">TypeScript</span>
+        <span className="hidden sm:inline text-[#334155]">UTF-8</span>
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-[#334155]">
+        <span className="hidden md:inline text-[#334155]">
           Ln {sectionLines[activeSection]}, Col 1
         </span>
-        <span className="text-[#334155]">Spaces: 2</span>
-        <span className="flex items-center gap-1 text-[#334155]">
+        <span className="hidden md:inline text-[#334155]">Spaces: 2</span>
+        <span className="hidden sm:flex items-center gap-1 text-[#334155]">
           <span className="text-[#28c840]">✓</span>
           No problems
         </span>

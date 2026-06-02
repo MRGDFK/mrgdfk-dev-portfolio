@@ -248,7 +248,7 @@ export default function About() {
           </div>
 
           {/* Metrics */}
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {metrics.map((m) => (
               <div
                 key={m.label}
@@ -281,8 +281,8 @@ export default function About() {
           </div>
         </div>
 
-        {/* RIGHT — large photo */}
-        <div className="flex flex-col items-center gap-5 md:sticky md:top-6">
+        {/* RIGHT — large photo (top on mobile, right column on desktop) */}
+        <div className="flex flex-col items-center gap-5 order-first md:order-last md:sticky md:top-6">
 
           {/* Large photo */}
           {/* Outer rectangle — binary rain fills this, brackets sit on corners */}

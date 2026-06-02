@@ -15,13 +15,13 @@ interface MainPanelProps {
   onToggleSidebar: () => void
 }
 
-const tabs: { section: Section; label: string; color: string }[] = [
-  { section: 'intro', label: 'Terminal.sh', color: '#00d4ff' },
-  { section: 'about', label: 'About.tsx', color: '#61dafb' },
-  { section: 'projects', label: 'Projects.ts', color: '#fbbf24' },
-  { section: 'skills', label: 'Skills.json', color: '#a5f3a5' },
-  { section: 'education', label: 'Education.tsx', color: '#818cf8' },
-  { section: 'contact', label: 'Contact.tsx', color: '#f472b6' },
+const tabs: { section: Section; label: string; shortLabel: string; color: string }[] = [
+  { section: 'intro',     label: 'Terminal.sh',   shortLabel: 'Terminal',  color: '#00d4ff' },
+  { section: 'about',     label: 'About.tsx',     shortLabel: 'About',     color: '#61dafb' },
+  { section: 'projects',  label: 'Projects.ts',   shortLabel: 'Projects',  color: '#fbbf24' },
+  { section: 'skills',    label: 'Skills.json',   shortLabel: 'Skills',    color: '#a5f3a5' },
+  { section: 'education', label: 'Education.tsx', shortLabel: 'Edu',       color: '#818cf8' },
+  { section: 'contact',   label: 'Contact.tsx',   shortLabel: 'Contact',   color: '#f472b6' },
 ]
 
 export default function MainPanel({ activeSection, onSelect, sidebarOpen, onToggleSidebar }: MainPanelProps) {
@@ -40,8 +40,8 @@ export default function MainPanel({ activeSection, onSelect, sidebarOpen, onTogg
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[#0a0e1a]">
-      {/* Tab bar */}
-      <div className="flex items-center border-b border-[#1e2d40] bg-[#0d1321] overflow-x-auto shrink-0">
+      {/* Tab bar — horizontally scrollable, no scrollbar */}
+      <div className="flex items-center border-b border-[#1e2d40] bg-[#0d1321] overflow-x-auto scrollbar-none shrink-0">
         {/* Sidebar toggle */}
         <button
           onClick={onToggleSidebar}
@@ -58,7 +58,7 @@ export default function MainPanel({ activeSection, onSelect, sidebarOpen, onTogg
           <button
             key={tab.section}
             onClick={() => onSelect(tab.section)}
-            className={`flex items-center gap-1.5 px-4 h-9 text-[12px] whitespace-nowrap shrink-0 transition-all duration-200 border-b-2 ${
+            className={`flex items-center gap-1.5 px-3 md:px-4 h-9 text-[12px] whitespace-nowrap shrink-0 transition-all duration-200 border-b-2 ${
               activeSection === tab.section
                 ? 'border-[#00d4ff] bg-[#0a0e1a] text-[#e2e8f0]'
                 : 'border-transparent text-[#475569] hover:text-[#94a3b8] hover:bg-white/[0.02]'
@@ -70,13 +70,14 @@ export default function MainPanel({ activeSection, onSelect, sidebarOpen, onTogg
             >
               ●
             </span>
-            {tab.label}
+            <span className="md:hidden">{tab.shortLabel}</span>
+            <span className="hidden md:inline">{tab.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-1 px-4 py-1.5 text-[11px] text-[#334155] border-b border-[#0f1a27] bg-[#080c16] select-none">
+      {/* Breadcrumb — hidden on mobile */}
+      <div className="hidden md:flex items-center gap-1 px-4 py-1.5 text-[11px] text-[#334155] border-b border-[#0f1a27] bg-[#080c16] select-none">
         <span>sharjil</span>
         <span>›</span>
         <span>portfolio</span>

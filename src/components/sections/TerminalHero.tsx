@@ -100,39 +100,58 @@ function BinaryRain({ width, height }: { width: number; height: number }) {
 function PhotoPanel() {
   const [imgError, setImgError] = useState(false)
 
+  const scanLines = { background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.07) 3px,rgba(0,0,0,0.07) 4px)' }
+
+  const PhotoCard = ({ size }: { size: 'sm' | 'lg' }) => (
+    <div className={`relative rounded-lg overflow-hidden border border-[#00d4ff]/30 shadow-[0_0_25px_rgba(0,212,255,0.2)] shrink-0 ${size === 'sm' ? 'w-16 h-24' : 'w-32 h-40'}`}>
+      {!imgError ? (
+        <img src="/profile.jpg" alt="Sharjil" className="w-full h-full object-cover object-top" onError={() => setImgError(true)} />
+      ) : (
+        <div className="w-full h-full bg-[#0d1321] flex flex-col items-center justify-center gap-2">
+          <svg viewBox="0 0 80 80" className="w-8 h-8" fill="none">
+            <circle cx="40" cy="28" r="14" fill="rgba(0,212,255,0.15)" stroke="rgba(0,212,255,0.4)" strokeWidth="1.5"/>
+            <path d="M10 72 C10 52 70 52 70 72" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.35)" strokeWidth="1.5"/>
+          </svg>
+        </div>
+      )}
+      <div className="absolute inset-0 pointer-events-none" style={scanLines} />
+    </div>
+  )
+
   return (
-    <div className="relative w-44 h-full min-h-[320px] shrink-0 overflow-hidden border-l border-[#1e2d40]">
+    <div className="relative w-full h-36 md:w-44 md:h-full md:min-h-[320px] shrink-0 overflow-hidden border-b border-[#1e2d40] md:border-b-0 md:border-l">
       {/* Binary rain background */}
       <BinaryRain width={176} height={320} />
 
-      {/* Dark overlay gradient */}
+      {/* Dark overlay gradients */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#080c16]/40 via-transparent to-[#080c16]/80 z-10" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#080c16]/50 to-transparent z-10" />
 
-      {/* Photo */}
-      <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="relative w-32 h-40 rounded-lg overflow-hidden border border-[#00d4ff]/30 shadow-[0_0_25px_rgba(0,212,255,0.2)]">
-          {!imgError ? (
-            <img
-              src="/profile.jpg"
-              alt="Sharjil"
-              className="w-full h-full object-cover object-top"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className="w-full h-full bg-[#0d1321] flex flex-col items-center justify-center gap-2">
-              <svg viewBox="0 0 80 80" className="w-12 h-12" fill="none">
-                <circle cx="40" cy="28" r="14" fill="rgba(0,212,255,0.15)" stroke="rgba(0,212,255,0.4)" strokeWidth="1.5"/>
-                <path d="M10 72 C10 52 70 52 70 72" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.35)" strokeWidth="1.5"/>
-              </svg>
-              <span className="text-[#00d4ff]/40 text-[8px] font-mono tracking-widest">PHOTO</span>
-            </div>
-          )}
+      {/* Mobile layout: photo left, name right */}
+      <div className="md:hidden absolute inset-0 z-20 flex items-center gap-4 px-5">
+        <PhotoCard size="sm" />
+        <div className="flex flex-col gap-0.5">
+          <div className="text-[#e2e8f0] text-[13px] font-bold font-mono">Sharjil S. Khan</div>
+          <div className="text-[#00d4ff] text-[10px] font-mono opacity-80">Full-Stack Dev</div>
+          <div className="flex items-center gap-1.5 mt-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" />
+            <span className="text-[#4ade80] text-[10px] font-mono">available</span>
+          </div>
+        </div>
+      </div>
 
-          {/* Scan line over photo */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.07) 3px,rgba(0,0,0,0.07) 4px)' }}
-          />
+      {/* Desktop layout: centered photo + name at bottom */}
+      <div className="hidden md:block">
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <PhotoCard size="lg" />
+        </div>
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center z-20 gap-0.5">
+          <div className="text-[#e2e8f0] text-[11px] font-bold font-mono text-center">Sharjil S. Khan</div>
+          <div className="text-[#00d4ff] text-[9px] font-mono text-center opacity-80">Full-Stack Dev</div>
+          <div className="flex items-center gap-1 mt-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" />
+            <span className="text-[#4ade80] text-[9px] font-mono">available</span>
+          </div>
         </div>
       </div>
 
@@ -141,16 +160,6 @@ function PhotoPanel() {
       <div className="absolute bottom-3 right-3 w-4 h-4 border-b border-r border-[#00d4ff]/40 z-20" />
       <div className="absolute top-3 left-3 w-4 h-4 border-t border-l border-[#00d4ff]/40 z-20" />
       <div className="absolute bottom-3 left-3 w-4 h-4 border-b border-l border-[#00d4ff]/40 z-20" />
-
-      {/* Name tag at bottom */}
-      <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center z-20 gap-0.5">
-        <div className="text-[#e2e8f0] text-[11px] font-bold font-mono text-center">Sharjil S. Khan</div>
-        <div className="text-[#00d4ff] text-[9px] font-mono text-center opacity-80">Full-Stack Dev</div>
-        <div className="flex items-center gap-1 mt-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" />
-          <span className="text-[#4ade80] text-[9px] font-mono">available</span>
-        </div>
-      </div>
     </div>
   )
 }
@@ -170,7 +179,7 @@ export default function TerminalHero() {
   }
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto">
+    <div className="p-4 md:p-10 max-w-5xl mx-auto">
 
       {/* Terminal window */}
       <div className="rounded-lg overflow-hidden border border-[#1e2d40] shadow-2xl shadow-black/60">
@@ -182,10 +191,10 @@ export default function TerminalHero() {
           <span className="ml-3 text-xs text-[#475569] font-mono">sharjil@portfolio: ~/intro</span>
         </div>
 
-        {/* Terminal body + photo side by side */}
-        <div className="flex">
+        {/* Terminal body + photo: stacked on mobile, side by side on md+ */}
+        <div className="flex flex-col-reverse md:flex-row">
           {/* Terminal output */}
-          <div className="flex-1 bg-[#080c16] p-6 font-mono text-sm min-h-[320px]">
+          <div className="flex-1 bg-[#080c16] p-4 md:p-6 font-mono text-sm min-h-[240px] md:min-h-[320px]">
             {lines.slice(0, visibleLines).map((line, i) => (
               <div key={i} className="leading-7">
                 {line.type === 'cmd' && (
