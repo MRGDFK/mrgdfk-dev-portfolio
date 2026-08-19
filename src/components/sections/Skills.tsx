@@ -88,14 +88,14 @@ export default function Skills() {
         <span className="text-[#1e2d40]"> — tech proficiency data</span>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-8 items-start">
         {/* JSON tree left */}
-        <div className="border border-[#1e2d40] rounded-lg overflow-hidden">
+        <div className="border border-[#1e2d40] rounded-lg overflow-hidden min-h-0">
           <div className="flex items-center gap-2 px-4 py-2 bg-[#0d1321] border-b border-[#1e2d40] text-xs text-[#475569]">
             <span className="text-[#a5f3a5]">{'{}'}</span>
             <span>Skills.json</span>
           </div>
-          <div className="bg-[#080c16] p-4 font-mono text-xs leading-7 overflow-y-auto max-h-[520px]">
+          <div className="bg-[#080c16] p-4 font-mono text-xs leading-7 overflow-y-auto" style={{ maxHeight: '70vh' }}>
             <div><span className="text-[#94a3b8]">{'{'}</span></div>
             {(Object.entries(skillsData) as [Category, typeof skillsData[Category]][]).map(([key, val]) => (
               <div key={key} className="ml-2">
@@ -198,9 +198,9 @@ export default function Skills() {
           <div className="mt-8">
             <div className="text-[10px] text-[#334155] uppercase tracking-widest mb-3">// all technologies</div>
             <div className="flex flex-wrap gap-2">
-              {Object.values(skillsData).flatMap(c => c.skills.map(s => ({ name: s.name, color: c.color }))).map((item) => (
+              {Object.entries(skillsData).flatMap(([catKey, c]) => c.skills.map(s => ({ name: s.name, color: c.color, key: `${catKey}-${s.name}` }))).map((item) => (
                 <span
-                  key={item.name}
+                  key={item.key}
                   className="text-xs px-2.5 py-1 rounded border border-[#1e2d40] text-[#475569] hover:border-opacity-60 transition-all font-mono cursor-default"
                   style={{ '--hover-color': item.color } as React.CSSProperties}
                   onMouseEnter={e => {

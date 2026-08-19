@@ -582,7 +582,12 @@ function ProjectDetail({ project, onClose, onNext, onPrev }: {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export default function Projects() {
+interface ProjectsProps {
+  variant?: 'full' | 'featured'
+  limit?: number
+}
+
+export default function Projects({ variant = 'full', limit }: ProjectsProps = {}) {
   const [activeFilter, setActiveFilter] = useState<Filter>('all')
   const [filterKey, setFilterKey] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -632,53 +637,82 @@ export default function Projects() {
 
   const handleFilterChange = (f: Filter) => { setActiveFilter(f); setFilterKey(k => k + 1) }
 
+  const featured = variant === 'featured'
+  const wrapperClass = featured ? '' : 'p-6 md:p-10 max-w-6xl mx-auto'
+  const displayProjects = featured ? projects.slice(0, limit ?? 4) : filtered
+
   return (
     <div className="transition-opacity duration-150" style={{ opacity: isAnimating ? 0 : 1 }}>
       {selectedProject ? (
-        <div className="p-6 md:p-10 max-w-6xl mx-auto">
+        <div className={wrapperClass}>
           <ProjectDetail project={selectedProject} onClose={closeProject} onNext={goNext} onPrev={goPrev} />
         </div>
       ) : (
-        <div className="p-6 md:p-10 max-w-6xl mx-auto">
-          <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
-            <div>
-              <div className="text-[#475569] text-xs font-mono mb-2">// Projects.ts</div>
-              <h2 className="text-[#e2e8f0] text-2xl font-bold">Featured Projects</h2>
-              <p className="text-[#475569] text-sm mt-1">A selection of my work in Software Engineering and AI.</p>
+        <div className={wrapperClass}>
+          {!featured && (
+            <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
+              <div>
+                <div className="text-[#475569] text-xs font-mono mb-2">// Projects.ts</div>
+                <h2 className="text-[#e2e8f0] text-2xl font-bold">Featured Projects</h2>
+                <p className="text-[#475569] text-sm mt-1">A selection of my work in Software Engineering and AI.</p>
+              </div>
+              <div ref={containerRef} className="relative flex items-center gap-1 border border-[#1e2d40] rounded-lg p-1 bg-[#0d1321]">
+                <div className="absolute top-1 h-[calc(100%-8px)] rounded-md bg-[#00d4ff] pointer-events-none"
+                  style={{ left: pillStyle.left, width: pillStyle.width, opacity: pillStyle.opacity,
+                    transition: 'left 0.25s cubic-bezier(0.16,1,0.3,1), width 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease' }} />
+                {visibleFilters.map((f, idx) => (
+                  <button key={f} ref={el => { tabRefs.current[idx] = el }}
+                    onClick={() => handleFilterChange(f)}
+                    className={`relative z-10 px-3 py-1.5 text-xs font-mono rounded-md capitalize transition-colors duration-200 ${
+                      activeFilter === f ? 'text-[#0a0e1a] font-semibold' : 'text-[#475569] hover:text-[#94a3b8]'}`}>
+                    {f}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div ref={containerRef} className="relative flex items-center gap-1 border border-[#1e2d40] rounded-lg p-1 bg-[#0d1321]">
-              <div className="absolute top-1 h-[calc(100%-8px)] rounded-md bg-[#00d4ff] pointer-events-none"
-                style={{ left: pillStyle.left, width: pillStyle.width, opacity: pillStyle.opacity,
-                  transition: 'left 0.25s cubic-bezier(0.16,1,0.3,1), width 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.15s ease' }} />
-              {visibleFilters.map((f, idx) => (
-                <button key={f} ref={el => { tabRefs.current[idx] = el }}
-                  onClick={() => handleFilterChange(f)}
-                  className={`relative z-10 px-3 py-1.5 text-xs font-mono rounded-md capitalize transition-colors duration-200 ${
-                    activeFilter === f ? 'text-[#0a0e1a] font-semibold' : 'text-[#475569] hover:text-[#94a3b8]'}`}>
-                  {f}
-                </button>
-              ))}
+          )}
+
+          {featured && (
+            <div className="flex items-center justify-between mb-5">
+              <div className="text-[11px] text-[#334155] font-mono tracking-widest">// all projects</div>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'projects' }))}
+                className="text-xs font-mono text-[#475569] hover:text-[#00d4ff] transition-colors"
+              >
+                view all →
+              </button>
             </div>
-          </div>
+          )}
 
           {/* FIX 1: items-stretch so each row's cards match height */}
           <div key={filterKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
-            {filtered.map((project, i) => (
+            {displayProjects.map((project, i) => (
               <div key={project.id} className="flex"
                 style={{ animation: `cardIn 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms both` }}>
-                <ProjectCard project={project} onClick={() => openProject(project.id)} />
+                <ProjectCard project={project} onClick={() => {
+                  if (featured) {
+                    window.dispatchEvent(new CustomEvent('navigate', { detail: 'projects' }))
+                    setTimeout(() => {
+                      window.dispatchEvent(new CustomEvent('open-project', { detail: project.id }))
+                    }, 200)
+                  } else {
+                    openProject(project.id)
+                  }
+                }} />
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex items-center gap-3">
-            <div className="flex-1 h-px bg-[#1e2d40]" />
-            <a href="https://github.com/MRGDFK" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-[#475569] hover:text-[#00d4ff] font-mono transition-colors">
-              <span>⬡</span> view all on github <span className="opacity-50">↗</span>
-            </a>
-            <div className="flex-1 h-px bg-[#1e2d40]" />
-          </div>
+          {!featured && (
+            <div className="mt-8 flex items-center gap-3">
+              <div className="flex-1 h-px bg-[#1e2d40]" />
+              <a href="https://github.com/MRGDFK" target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-[#475569] hover:text-[#00d4ff] font-mono transition-colors">
+                <span>⬡</span> view all on github <span className="opacity-50">↗</span>
+              </a>
+              <div className="flex-1 h-px bg-[#1e2d40]" />
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -8,6 +8,11 @@ import {
 import { FaJava } from 'react-icons/fa'
 import { TbBrain } from 'react-icons/tb'
 import type { IconType } from 'react-icons'
+import Skills from './Skills'
+import Projects from './Projects'
+import Education from './Education'
+import DevTerminal from '@/components/DevTerminal'
+import ContactSection from '@/components/ContactSection'
 
 const techIcons: Record<string, IconType> = {
   'next.js':                SiNextdotjs,
@@ -53,6 +58,21 @@ const stats = [
   { label: 'Projects',     value: '10+',      icon: '◈', color: '#fbbf24',  desc: 'shipped & live' },
   { label: 'Location',     value: 'Dhaka',   icon: '📍', color: '#f472b6', desc: 'Bangladesh 🇧🇩' },
 ]
+
+const profileStats = [
+  { label: 'Experience', value: '3+ yrs',        color: '#00d4ff' },
+  { label: 'Projects',   value: '10+ shipped',   color: '#fbbf24' },
+  { label: 'Focus',      value: 'Full-Stack & AI/RL', color: '#a5f3a5' },
+]
+
+function SectionHeader({ index, slug, title }: { index: string; slug: string; title: string }) {
+  return (
+    <div className="mb-6">
+      <div className="text-[11px] text-[#334155] font-mono tracking-widest mb-2">{`// ${index} — ${slug}`}</div>
+      <h2 className="text-[#e2e8f0] text-2xl md:text-3xl font-bold">{title}</h2>
+    </div>
+  )
+}
 
 // Binary rain animation canvas
 function BinaryRain({ width, height }: { width: number; height: number }) {
@@ -164,15 +184,122 @@ function PhotoPanel() {
   )
 }
 
+const TYPE_SPEED = 35 // ms per character
+const LINE_PAUSE = 260 // ms pause between lines
+
+function TypingCursor() {
+  return <span className="inline-block w-2 h-4 bg-[#00d4ff] animate-[blink_1s_step-end_infinite] ml-0.5 align-middle" />
+}
+
+function renderTypingLine(line: typeof lines[number], typed: string) {
+  if (line.type === 'cmd' || line.type === 'active') {
+    return (
+      <div className="flex items-center gap-1">
+        <span className="text-[#00d4ff]">➜</span>
+        <span className="text-[#475569] text-xs">~/portfolio</span>
+        <span className="text-[#00d4ff] ml-1">$</span>
+        {line.type === 'cmd' && <span className="text-[#e2e8f0] ml-1">{typed}</span>}
+        <TypingCursor />
+      </div>
+    )
+  }
+  const colorClass =
+    line.type === 'output-string' ? 'text-[#fbbf24]' :
+    line.type === 'output-dir' ? 'text-[#a5f3a5]' :
+    'text-[#94a3b8]'
+  return (
+    <div className={`pl-6 ${colorClass}`}>
+      {typed}
+      <TypingCursor />
+    </div>
+  )
+}
+
+type Phase = 'typing' | 'divider' | 'node-cmd' | 'spinner' | 'output' | 'cursor'
+
 export default function TerminalHero() {
-  const [visibleLines, setVisibleLines] = useState(0)
+  const [completedLines, setCompletedLines] = useState(0)
+  const [currentTyped, setCurrentTyped] = useState('')
+  const [replayCount, setReplayCount] = useState(0)
+  const [animStarted, setAnimStarted] = useState(false)
+  const [phase, setPhase] = useState<Phase>('typing')
+  const [nodeCmdTyped, setNodeCmdTyped] = useState('')
 
   useEffect(() => {
-    setVisibleLines(0)
-    lines.forEach((line, i) => {
-      setTimeout(() => setVisibleLines(i + 1), line.delay)
-    })
-  }, [])
+    let cancelled = false
+    const timeouts: ReturnType<typeof setTimeout>[] = []
+
+    setCompletedLines(0)
+    setCurrentTyped('')
+    setAnimStarted(false)
+    setPhase('typing')
+    setNodeCmdTyped('')
+
+    const startNodeAnimation = () => {
+      const nodeCmd = '$ node --version'
+      timeouts.push(setTimeout(() => {
+        if (cancelled) return
+        setPhase('node-cmd')
+        let ci = 0
+        const typeNodeChar = () => {
+          if (cancelled) return
+          if (ci <= nodeCmd.length) {
+            setNodeCmdTyped(nodeCmd.slice(0, ci))
+            ci++
+            timeouts.push(setTimeout(typeNodeChar, TYPE_SPEED))
+          } else {
+            timeouts.push(setTimeout(() => {
+              if (cancelled) return
+              setPhase('spinner')
+              timeouts.push(setTimeout(() => {
+                if (cancelled) return
+                setPhase('output')
+                timeouts.push(setTimeout(() => {
+                  if (cancelled) return
+                  setPhase('cursor')
+                }, 120))
+              }, 1200))
+            }, LINE_PAUSE))
+          }
+        }
+        typeNodeChar()
+      }, 300))
+    }
+
+    const typeLine = (lineIdx: number, charIdx: number) => {
+      if (cancelled) return
+      if (lineIdx >= lines.length) {
+        timeouts.push(setTimeout(() => {
+          if (cancelled) return
+          setPhase('divider')
+          startNodeAnimation()
+        }, LINE_PAUSE))
+        return
+      }
+      const line = lines[lineIdx]
+      if (lineIdx === 0 && charIdx === 0) {
+        setAnimStarted(true)
+      }
+      setCurrentTyped(line.text.slice(0, charIdx))
+      if (charIdx >= line.text.length) {
+        timeouts.push(setTimeout(() => {
+          if (cancelled) return
+          setCompletedLines(lineIdx + 1)
+          setCurrentTyped('')
+          typeLine(lineIdx + 1, 0)
+        }, LINE_PAUSE))
+      } else {
+        timeouts.push(setTimeout(() => typeLine(lineIdx, charIdx + 1), TYPE_SPEED))
+      }
+    }
+
+    typeLine(0, 0)
+
+    return () => {
+      cancelled = true
+      timeouts.forEach(clearTimeout)
+    }
+  }, [replayCount])
 
   const navigate = (section: string) => {
     window.dispatchEvent(new CustomEvent('navigate', { detail: section }))
@@ -189,13 +316,20 @@ export default function TerminalHero() {
           <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
           <div className="w-3 h-3 rounded-full bg-[#28c840]" />
           <span className="ml-3 text-xs text-[#475569] font-mono">sharjil@portfolio: ~/intro</span>
+          <button
+            onClick={() => setReplayCount(c => c + 1)}
+            title="Replay animation"
+            className="ml-auto flex items-center gap-1 px-2 py-1 text-[11px] font-mono text-[#475569] hover:text-[#00d4ff] hover:bg-white/5 rounded transition-colors"
+          >
+            <span>↺</span> replay
+          </button>
         </div>
 
         {/* Terminal body + photo: stacked on mobile, side by side on md+ */}
         <div className="flex flex-col-reverse md:flex-row">
           {/* Terminal output */}
           <div className="flex-1 bg-[#080c16] p-4 md:p-6 font-mono text-sm min-h-[240px] md:min-h-[320px]">
-            {lines.slice(0, visibleLines).map((line, i) => (
+            {animStarted && lines.slice(0, completedLines).map((line, i) => (
               <div key={i} className="leading-7">
                 {line.type === 'cmd' && (
                   <div className="flex items-center gap-1">
@@ -224,7 +358,7 @@ export default function TerminalHero() {
                 {line.type === 'output-string' && (
                   <div className="text-[#fbbf24] pl-6">{line.text}</div>
                 )}
-                {line.type === 'active' && i === visibleLines - 1 && (
+                {line.type === 'active' && (
                   <div className="flex items-center gap-1">
                     <span className="text-[#00d4ff]">➜</span>
                     <span className="text-[#475569] text-xs">~/portfolio</span>
@@ -234,6 +368,45 @@ export default function TerminalHero() {
                 )}
               </div>
             ))}
+            {animStarted && completedLines < lines.length && (
+              <div className="leading-7">{renderTypingLine(lines[completedLines], currentTyped)}</div>
+            )}
+
+            {/* Divider */}
+            {phase !== 'typing' && (
+              <div className="border-t border-white/10 my-4" />
+            )}
+
+            {/* Node command section */}
+            {(phase === 'node-cmd' || phase === 'spinner' || phase === 'output' || phase === 'cursor') && (
+              <div className="leading-7">
+                <div className="flex items-center gap-1">
+                  <span className="text-[#00d4ff]">➜</span>
+                  <span className="text-[#475569] text-xs">~/portfolio</span>
+                  <span className="text-[#00d4ff] ml-1">$</span>
+                  <span className="text-[#e2e8f0] ml-1">{nodeCmdTyped}</span>
+                  {phase === 'node-cmd' && <TypingCursor />}
+                  {phase === 'spinner' && (
+                    <span className="inline-block w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin ml-1" />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Output lines */}
+            {(phase === 'output' || phase === 'cursor') && (
+              <div className="leading-7">
+                <div className="text-[#94a3b8] pl-6">v20.12.0</div>
+                <div className="text-[#a5f3a5] pl-6">⊙ ✓ [process compiled successfully in 16ms]</div>
+              </div>
+            )}
+
+            {/* Blinking cursor */}
+            {phase === 'cursor' && (
+              <div className="leading-7 pl-6">
+                <span className="inline-block w-2 h-4 bg-[#00d4ff] animate-[blink_1s_step-end_infinite] align-middle" />
+              </div>
+            )}
           </div>
 
           {/* Photo panel with binary rain — right side of terminal */}
@@ -242,26 +415,23 @@ export default function TerminalHero() {
       </div>
 
       {/* Quick nav */}
-      {visibleLines >= lines.length && (
-        <div className="mt-8 animate-fade-in">
-          <div className="text-[11px] text-[#334155] uppercase tracking-widest mb-3 font-mono">// quick navigate</div>
-          <div className="flex flex-wrap gap-3">
-            {quickLinks.map((link) => (
-              <button
-                key={link.section}
-                onClick={() => navigate(link.section)}
-                className="px-4 py-2 text-sm border border-[#1e2d40] rounded text-[#00d4ff] hover:bg-[#00d4ff]/10 hover:border-[#00d4ff]/50 hover:shadow-[0_0_12px_rgba(0,212,255,0.15)] transition-all font-mono"
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
+      <div className="mt-8 animate-fade-in">
+        <div className="text-[11px] text-[#334155] uppercase tracking-widest mb-3 font-mono">// quick navigate</div>
+        <div className="flex flex-wrap gap-3">
+          {quickLinks.map((link) => (
+            <button
+              key={link.section}
+              onClick={() => navigate(link.section)}
+              className="px-4 py-2 text-sm border border-[#1e2d40] rounded text-[#00d4ff] hover:bg-[#00d4ff]/10 hover:border-[#00d4ff]/50 hover:shadow-[0_0_12px_rgba(0,212,255,0.15)] transition-all font-mono"
+            >
+              {link.label}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Stats row — beautiful colored cards */}
-      {visibleLines >= lines.length && (
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
+      <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -311,7 +481,85 @@ export default function TerminalHero() {
             </div>
           ))}
         </div>
-      )}
+
+      {/* Homepage sections */}
+      <div className="mt-20 space-y-24 animate-fade-in">
+
+          {/* 01 — tech_stack */}
+          <section>
+            <SectionHeader index="01" slug="tech_stack" title="Tech Stack" />
+            <div className="border border-[#1e2d40] rounded-xl overflow-hidden bg-[#0d1321]">
+              <Skills />
+            </div>
+          </section>
+
+          {/* 02 — featured_projects */}
+          <section>
+            <SectionHeader index="02" slug="featured_projects" title="Featured Projects" />
+            <Projects variant="featured" limit={4} />
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => navigate('projects')}
+                className="px-4 py-2 text-sm border border-[#1e2d40] rounded text-[#00d4ff] hover:bg-[#00d4ff]/10 hover:border-[#00d4ff]/50 hover:shadow-[0_0_12px_rgba(0,212,255,0.15)] transition-all font-mono"
+              >
+                view_all_projects →
+              </button>
+            </div>
+          </section>
+
+          {/* 03 — career_timeline */}
+          <section>
+            <SectionHeader index="03" slug="career_timeline" title="Career Timeline" />
+            <div className="border border-[#1e2d40] rounded-xl overflow-hidden bg-[#0d1321]">
+              <Education />
+            </div>
+          </section>
+
+          {/* 05 — profile_overview */}
+          <section>
+            <SectionHeader index="05" slug="profile_overview" title="About & Engineering Philosophy" />
+            <div className="grid md:grid-cols-2 gap-10 items-start">
+              {/* Left: bio + stat cards */}
+              <div className="space-y-5">
+                <div className="space-y-3 text-sm text-[#94a3b8] leading-relaxed">
+                  <p>
+                    I build <span className="text-[#e2e8f0] font-medium">scalable web applications</span> using the MERN stack and Next.js ecosystem. I specialize in turning complex problems into clean, functional products.
+                  </p>
+                  <p>
+                    Currently exploring <span className="text-[#00d4ff]">System Design, AI, and Reinforcement Learning</span> — building experiments like card game AI and intelligent agents.
+                  </p>
+                  <p>
+                    When I&apos;m not coding, I work in <span className="text-[#fbbf24]">cinematography and creative production</span> — I shoot brand films, visual stories, and run ShutterArc Studios.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {profileStats.map((s) => (
+                    <div
+                      key={s.label}
+                      className="border border-[#1e2d40] rounded-lg p-3 bg-[#0d1321] text-center transition-all duration-300"
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = s.color + '55'; e.currentTarget.style.boxShadow = `0 0 16px ${s.color}18` }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = '#1e2d40'; e.currentTarget.style.boxShadow = '' }}
+                    >
+                      <div className="font-bold font-mono text-sm" style={{ color: s.color }}>{s.value}</div>
+                      <div className="text-[10px] text-[#475569] mt-1">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: DevTerminal widget */}
+              <DevTerminal />
+            </div>
+          </section>
+
+          {/* 06 — initiate_contact */}
+          <section>
+            <div className="text-[11px] text-[#334155] font-mono tracking-widest mb-6">// 06 — initiate_contact</div>
+            <ContactSection />
+          </section>
+
+        </div>
     </div>
   )
 }
